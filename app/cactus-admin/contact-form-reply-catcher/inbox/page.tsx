@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import { getSessionFromCookie } from '@/lib/auth/session'
 import { hasPermission } from '@/lib/permissions/check'
 import { listSubmissionsWithCaughtReplies } from '@/modules/contact-form-reply-catcher/lib/db'
+import { FetchLatestRepliesButton } from '@/modules/contact-form-reply-catcher/components/FetchLatestRepliesButton'
 
 export const metadata = { title: 'Caught Replies — Reply Catcher' }
 
@@ -20,6 +21,7 @@ export default async function CaughtRepliesInboxPage() {
     <div>
       <div className="page-header">
         <h1 className="page-title">Caught Replies</h1>
+        <FetchLatestRepliesButton />
       </div>
       <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
         Conversations where Reply Catcher has picked up a reply from your real mailbox. Each one links

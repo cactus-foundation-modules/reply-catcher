@@ -1,6 +1,6 @@
 {
   "name": "contact-form-reply-catcher",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "tablePrefix": "rc_",
   "description": "Polls the contact-form admin's real mailbox and threads submitter replies (and personally-sent replies) back into the Cactus contact-form inbox.",
   "requiresModules": [
