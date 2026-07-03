@@ -1,6 +1,6 @@
 {
   "name": "contact-form-reply-catcher",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "tablePrefix": "rc_",
   "description": "Polls the contact-form admin's real mailbox and threads submitter replies (and personally-sent replies) back into the Cactus contact-form inbox.",
   "requiresModules": [
@@ -14,6 +14,7 @@
     { "id": "contact-form-reply-catcher", "label": "Reply Catcher", "permission": "replycatcher.manage", "import": "./components/SettingsTab", "component": "ReplyCatcherSettingsTab" }
   ],
   "extensionPoints": [
+    { "point": "contact-form.inbox-actions", "id": "reply-catcher-fetch-latest", "permission": "replycatcher.manage", "import": "./components/FetchLatestRepliesButton", "component": "FetchLatestRepliesButton" },
     { "point": "contact-form.inbox-actions", "id": "reply-catcher-caught-replies-link", "permission": "replycatcher.manage", "import": "./components/CaughtRepliesButton", "component": "CaughtRepliesButton" },
     { "point": "contact-form.submission-detail", "id": "reply-catcher-caught-replies", "permission": "replycatcher.manage", "import": "./components/CaughtRepliesPanel", "component": "CaughtRepliesPanel" }
   ],
