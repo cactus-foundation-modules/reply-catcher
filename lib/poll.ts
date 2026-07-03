@@ -1,4 +1,4 @@
-import type { ImapFlow } from 'imapflow'
+import type { ImapFlow, MessageEnvelopeObject } from 'imapflow'
 import { simpleParser } from 'mailparser'
 import EmailReplyParser from 'email-reply-parser'
 import { connectMailbox, resolveFolders } from './imap'
@@ -66,10 +66,20 @@ async function processFolder(
     if (range === null) return
 
     const fetchRange = Array.isArray(range) ? range : range.range
+
+    // ImapFlow can't run a second command (e.g. fetchOne below) while this
+    // fetch()'s response stream is still open on the same connection - doing
+    // so deadlocks silently with no error and no timeout. So drain the
+    // envelope-only listing fully into an array first, then issue any
+    // follow-up per-message commands afterwards, once this loop has closed.
+    const messages: { uid: number; envelope: MessageEnvelopeObject | undefined }[] = []
     for await (const message of client.fetch(fetchRange, { uid: true, envelope: true }, { uid: true })) {
+      messages.push({ uid: message.uid, envelope: message.envelope })
+    }
+
+    for (const { uid, envelope } of messages) {
       counts.scanned++
 
-      const envelope = message.envelope
       const subject = envelope?.subject ?? ''
 
       // For an Inbox message, the person we're matching against is whoever sent
@@ -88,20 +98,20 @@ async function processFolder(
       }
 
       if (!counterpartEmail) {
-        await markMessageProcessed({ uid: message.uid, folder, messageIdHeader: envelope?.messageId ?? null, matchedSubmissionId: null })
+        await markMessageProcessed({ uid, folder, messageIdHeader: envelope?.messageId ?? null, matchedSubmissionId: null })
         continue
       }
 
       const submissionId = await findBestSubmissionMatch(counterpartEmail, subject)
       if (!submissionId) {
         counts.unmatched++
-        await markMessageProcessed({ uid: message.uid, folder, messageIdHeader: envelope?.messageId ?? null, matchedSubmissionId: null })
+        await markMessageProcessed({ uid, folder, messageIdHeader: envelope?.messageId ?? null, matchedSubmissionId: null })
         continue
       }
 
       // Only fetch and parse the full message body for genuine matches - keeps
       // routine scanning of a large mailbox cheap.
-      const full = await client.fetchOne(String(message.uid), { source: true }, { uid: true })
+      const full = await client.fetchOne(String(uid), { source: true }, { uid: true })
       const rawText = full && full.source ? (await simpleParser(full.source)).text ?? '' : ''
       const strippedBody = rawText ? new EmailReplyParser().parseReply(rawText) : ''
       const body = strippedBody.trim() || rawText.trim() || '(no text content)'
@@ -117,7 +127,7 @@ async function processFolder(
       }
 
       counts.matched++
-      await markMessageProcessed({ uid: message.uid, folder, messageIdHeader: envelope?.messageId ?? null, matchedSubmissionId: submissionId })
+      await markMessageProcessed({ uid, folder, messageIdHeader: envelope?.messageId ?? null, matchedSubmissionId: submissionId })
     }
   } finally {
     lock.release()
