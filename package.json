@@ -1,6 +1,6 @@
 {
   "name": "cactus-module-contact-form-reply-catcher",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Reply Catcher module for Cactus — threads real-mailbox replies back into the contact-form inbox",
   "license": "MIT",
   "private": true
