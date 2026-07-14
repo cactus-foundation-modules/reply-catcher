@@ -49,7 +49,13 @@ export async function GET(request: NextRequest) {
       expiresAt: tokens.expiresAt,
     })
   } catch (err) {
-    console.error('[contact-form-reply-catcher/oauth] token exchange failed:', err)
+    // Message only. The thrown error can carry the provider's whole response
+    // object, and a failed OAuth exchange is exactly the case where that body may
+    // echo back the client secret or a partial token - straight into the log.
+    console.error(
+      '[contact-form-reply-catcher/oauth] token exchange failed:',
+      err instanceof Error ? err.message : 'Unknown error'
+    )
     return adminSettingsRedirect(request, 'oauth=error&reason=token_exchange')
   }
 
