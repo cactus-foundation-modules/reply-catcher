@@ -23,7 +23,7 @@ export default async function CaughtRepliesInboxPage() {
         <h1 className="page-title">Caught Replies</h1>
         <FetchLatestRepliesButton />
       </div>
-      <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
+      <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>
         Conversations where Reply Catcher has picked up a reply from your real mailbox. Each one links
         to a merged view of the whole thread.
       </p>
@@ -41,9 +41,9 @@ export default async function CaughtRepliesInboxPage() {
             >
               <div>
                 <div style={{ fontWeight: 500 }}>{s.subject ?? `Message from ${s.name}`}</div>
-                <div style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>{s.name} · {s.email}</div>
+                <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>{s.name} · {s.email}</div>
               </div>
-              <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
+              <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>
                 {s.lastCaughtAt.toLocaleString('en-GB')}
               </div>
             </Link>

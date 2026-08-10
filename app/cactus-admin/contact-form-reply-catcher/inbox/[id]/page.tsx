@@ -69,7 +69,7 @@ export default async function CaughtRepliesThreadPage({ params }: Props) {
       </div>
 
       <div className="card" style={{ marginBottom: '1.5rem' }}>
-        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
+        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.25rem' }}>
           From
         </div>
         <div style={{ fontWeight: 500 }}>{submission.name}</div>
@@ -102,7 +102,7 @@ export default async function CaughtRepliesThreadPage({ params }: Props) {
                     </span>
                   )}
                 </span>
-                <span style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
+                <span style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>
                   {entry.createdAt.toLocaleString('en-GB')}
                 </span>
               </div>
