@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="module-art.webp" alt="Cactus Reply Catcher" width="640" />
+</p>
+
 # Cactus Reply Catcher
 
 A [Cactus](https://github.com/usersaynoso/cactus-foundation) module that closes the loop on the
