@@ -16,7 +16,12 @@ type TimelineEntry = {
   createdAt: Date
   label: string
   isCaught: boolean
+  /** Markdown. */
   body: string
+  /** Already-rendered markup shown beneath the body: the signature exactly as it
+   *  was sent. Contact form signatures can be pasted HTML or built from email
+   *  blocks, neither of which has a markdown source to fold into `body`. */
+  bodyHtml?: string
 }
 
 export default async function CaughtRepliesThreadPage({ params }: Props) {
@@ -41,7 +46,11 @@ export default async function CaughtRepliesThreadPage({ params }: Props) {
       createdAt: r.createdAt,
       label: r.sentByDisplayName ?? r.sentByEmail,
       isCaught: false,
-      body: r.signatureSnapshot ? `${r.body}\n\n---\n\n${r.signatureSnapshot}` : r.body,
+      body: r.body,
+      // Replies sent before signature kinds existed carry only the markdown
+      // source, so those are rendered the way they always were.
+      bodyHtml: r.signatureSnapshotHtml
+        ?? (r.signatureSnapshot ? markdownToHtml(r.signatureSnapshot, { breaks: true }) : undefined),
     })),
     ...caughtReplies.map((r) => ({
       id: r.id,
@@ -107,6 +116,17 @@ export default async function CaughtRepliesThreadPage({ params }: Props) {
                 </span>
               </div>
               <div className="prose" style={{ fontSize: '0.9375rem' }} dangerouslySetInnerHTML={{ __html: markdownToHtml(entry.body, { breaks: true }) }} />
+              {entry.bodyHtml && (
+                <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px solid var(--color-border)' }}>
+                  {/* On white with the light scheme pinned: a sent signature
+                      carries the fixed colours an inbox needs, which the admin's
+                      dark mode would otherwise fight. */}
+                  <div
+                    style={{ padding: '0.75rem', borderRadius: 6, background: '#ffffff', colorScheme: 'light', overflowX: 'auto' }}
+                    dangerouslySetInnerHTML={{ __html: entry.bodyHtml }}
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>
