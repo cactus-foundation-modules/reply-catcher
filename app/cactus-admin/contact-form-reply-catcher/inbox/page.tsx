@@ -1,4 +1,5 @@
-import { formatInSiteTimezone, getSiteTimezone } from '@/lib/config/timezone'
+import { formatInSiteTimezone } from '@/lib/config/timezone'
+import { getSiteTimezone } from '@/lib/config/timezone.server'
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { getSessionFromCookie } from '@/lib/auth/session'
