@@ -1,3 +1,4 @@
+import { formatInSiteTimezone, getSiteTimezone } from '@/lib/config/timezone'
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { getSessionFromCookie } from '@/lib/auth/session'
@@ -8,6 +9,9 @@ import { FetchLatestRepliesButton } from '@/modules/contact-form-reply-catcher/c
 export const metadata = { title: 'Caught Replies — Reply Catcher' }
 
 export default async function CaughtRepliesInboxPage() {
+  // Server-rendered, so the machine's own clock is UTC. Every stamp on this
+  // page is read in the site's zone instead.
+  const timezone = await getSiteTimezone()
   const user = await getSessionFromCookie()
   if (!user) return null
   if (!await hasPermission(user, 'replycatcher.manage')) {
@@ -44,7 +48,7 @@ export default async function CaughtRepliesInboxPage() {
                 <div style={{ fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>{s.name} · {s.email}</div>
               </div>
               <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>
-                {s.lastCaughtAt.toLocaleString('en-GB')}
+                {formatInSiteTimezone(s.lastCaughtAt, timezone, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
               </div>
             </Link>
           ))}

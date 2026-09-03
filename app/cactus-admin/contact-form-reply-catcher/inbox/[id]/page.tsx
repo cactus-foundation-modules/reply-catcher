@@ -1,3 +1,4 @@
+import { formatInSiteTimezone, getSiteTimezone } from '@/lib/config/timezone'
 import Link from 'next/link'
 import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
@@ -25,6 +26,9 @@ type TimelineEntry = {
 }
 
 export default async function CaughtRepliesThreadPage({ params }: Props) {
+  // Server-rendered, so the machine's own clock is UTC. Every stamp on this
+  // page is read in the site's zone instead.
+  const timezone = await getSiteTimezone()
   const user = await getSessionFromCookie()
   if (!user) return null
   if (!await hasPermission(user, 'replycatcher.manage')) {
@@ -112,7 +116,7 @@ export default async function CaughtRepliesThreadPage({ params }: Props) {
                   )}
                 </span>
                 <span style={{ fontSize: '0.8125rem', color: 'var(--color-text-secondary)' }}>
-                  {entry.createdAt.toLocaleString('en-GB')}
+                  {formatInSiteTimezone(entry.createdAt, timezone, { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
               <div className="prose" style={{ fontSize: '0.9375rem' }} dangerouslySetInnerHTML={{ __html: markdownToHtml(entry.body, { breaks: true }) }} />
