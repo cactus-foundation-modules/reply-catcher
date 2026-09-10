@@ -12,5 +12,10 @@ export async function getCaughtReplyThreadMessages(submissionId: string): Promis
     senderLabel: r.senderType === 'admin' ? 'You (caught from your mailbox)' : (r.externalEmail ?? 'Submitter'),
     body: r.body,
     badge: 'Caught',
+    // Both directions land here - a reply the submitter sent, and one somebody
+    // here sent from their own mail program rather than from this screen. The
+    // timeline draws them the same way; anything reading the conversation back
+    // needs telling them apart.
+    direction: r.senderType === 'admin' ? 'out' : 'in',
   }))
 }
