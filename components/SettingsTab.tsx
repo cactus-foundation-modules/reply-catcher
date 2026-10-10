@@ -147,7 +147,7 @@ export function ReplyCatcherSettingsTab() {
       </div>
 
       <form onSubmit={save} className="card">
-        <div className="field">
+        <div className="field field--wide">
           <label>Mailbox type</label>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontWeight: 400 }}>
