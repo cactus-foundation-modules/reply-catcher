@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { SettingsHeaderActions, SettingsHeaderStatus } from '@/components/admin/SettingsHeaderActions'
+import { InfoTip } from '@/components/admin/InfoTip'
 
 type Settings = {
   provider: 'imap' | 'outlook_oauth' | null
@@ -121,22 +122,22 @@ export function ReplyCatcherSettingsTab() {
 
   return (
     <div>
-      <p style={{ color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-        Polls your real mailbox once a day and threads any replies your visitors (or you, replying
-        by hand) send there back into the contact-form inbox. The mailbox itself is never changed -
-        nothing is marked read, moved, or deleted.
-      </p>
 
       {message && (
-        <div className="card" style={{ marginBottom: '1rem' }}>{message}</div>
+        <div className={`alert ${/fail|error|could not/i.test(message) ? 'alert-danger' : 'alert-info'}`}>{message}</div>
       )}
 
       <div className="settings-cols">
       <div className="card">
-        <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
+        <div className="card-title">
           Status
+          <InfoTip>
+            Once a day this reads your real mailbox and threads any replies your visitors (or you, replying by hand) sent
+            there back into the contact-form inbox. The mailbox itself is never changed - nothing is marked read, moved
+            or deleted.
+          </InfoTip>
         </div>
-        <div style={{ fontSize: '0.9375rem' }}>
+        <div style={{ fontSize: 'var(--text-sm)' }}>
           {settings.lastPollAt
             ? `Last checked ${new Date(settings.lastPollAt).toLocaleString('en-GB')} - ${settings.lastPollStatus === 'ok' ? 'OK' : `error: ${settings.lastPollError}`}`
             : 'Never checked yet.'}
@@ -147,10 +148,11 @@ export function ReplyCatcherSettingsTab() {
       </div>
 
       <form onSubmit={save} className="card">
+        <div className="card-title">Mailbox</div>
         <div className="field field--wide">
           <label>Mailbox type</label>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontWeight: 400 }}>
+            <label className="settings-check">
               <input
                 type="radio"
                 checked={settings.provider === 'imap'}
@@ -158,7 +160,7 @@ export function ReplyCatcherSettingsTab() {
               />
               IMAP + app password
             </label>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontWeight: 400 }}>
+            <label className="settings-check">
               <input
                 type="radio"
                 checked={settings.provider === 'outlook_oauth'}
