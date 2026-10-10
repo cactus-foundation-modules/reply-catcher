@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { SettingsHeaderActions, SettingsHeaderStatus } from '@/components/admin/SettingsHeaderActions'
 
 type Settings = {
   provider: 'imap' | 'outlook_oauth' | null
@@ -57,8 +58,8 @@ export function ReplyCatcherSettingsTab() {
       })
   }, [])
 
-  async function save(e: React.FormEvent) {
-    e.preventDefault()
+  async function save(e?: React.FormEvent) {
+    e?.preventDefault()
     setSaving(true)
     setMessage(null)
     const res = await fetch('/api/m/contact-form-reply-catcher/admin/settings', {
@@ -130,7 +131,8 @@ export function ReplyCatcherSettingsTab() {
         <div className="card" style={{ marginBottom: '1rem' }}>{message}</div>
       )}
 
-      <div className="card" style={{ marginBottom: '1.5rem' }}>
+      <div className="settings-cols">
+      <div className="card">
         <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.5rem' }}>
           Status
         </div>
@@ -252,17 +254,21 @@ export function ReplyCatcherSettingsTab() {
           />
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button type="submit" className="btn btn-primary" disabled={saving}>
-            {saving ? 'Saving…' : 'Save settings'}
+        <SettingsHeaderActions>
+          <SettingsHeaderStatus message={message === 'Saved.' ? message : null} error={message && /fail/i.test(message) ? message : null} />
+          <button type="button" className="btn btn-primary" disabled={saving} onClick={() => save()}>
+            {saving ? 'Saving…' : 'Save changes'}
           </button>
-          {settings.provider === 'outlook_oauth' && settings.hasOAuthClient && (
+        </SettingsHeaderActions>
+        {settings.provider === 'outlook_oauth' && settings.hasOAuthClient && (
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
             <button type="button" className="btn btn-secondary" onClick={connectOutlook}>
               {settings.hasOAuthConnected ? 'Reconnect Outlook' : 'Connect Outlook'}
             </button>
-          )}
-        </div>
+          </div>
+        )}
       </form>
+      </div>
     </div>
   )
 }
