@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { getSessionFromCookie } from '@/lib/auth/session'
 import { hasPermission } from '@/lib/permissions/check'
 import { errorResponse } from '@/lib/utils'
-import { encryptSecret } from '@/lib/crypto/secrets'
+import { encryptSecret, isEncryptionKeyUsable } from '@/lib/crypto/secrets'
 import { getMailboxConfig, upsertMailboxConfig } from '@/modules/contact-form-reply-catcher/lib/db'
 
 export async function GET() {
@@ -48,7 +48,7 @@ export async function PATCH(request: NextRequest) {
   if (!user) return errorResponse('Not authenticated', 401)
   if (!await hasPermission(user, 'replycatcher.manage')) return errorResponse('Forbidden', 403)
 
-  if (!process.env.ENCRYPTION_KEY) {
+  if (!isEncryptionKeyUsable()) {
     return errorResponse('ENCRYPTION_KEY is not set. Add it to your environment before configuring a mailbox.', 503)
   }
 
