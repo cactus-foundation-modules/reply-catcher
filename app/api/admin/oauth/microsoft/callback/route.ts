@@ -5,12 +5,13 @@ import { getSiteUrlOrNull } from '@/lib/config/env'
 import { encryptSecret, decryptSecret } from '@/lib/crypto/secrets'
 import { getMailboxConfig, storeOAuthTokens } from '@/modules/contact-form-reply-catcher/lib/db'
 import { exchangeMicrosoftCode } from '@/modules/contact-form-reply-catcher/lib/oauth-microsoft'
+import { publicUrl } from '@/lib/security/public-origin'
 
 async function adminSettingsRedirect(request: NextRequest, query: string): Promise<NextResponse> {
   const config = await prisma.siteConfig.findUnique({ where: { id: 'singleton' }, select: { adminPath: true } })
   const adminPath = config?.adminPath ?? ''
   const res = NextResponse.redirect(
-    new URL(`/${adminPath}/config?tab=contact-form-reply-catcher&${query}`, request.url)
+    publicUrl(request, `/${adminPath}/config?tab=contact-form-reply-catcher&${query}`)
   )
   res.cookies.delete('cactus_rc_oauth_state')
   return res
@@ -18,7 +19,7 @@ async function adminSettingsRedirect(request: NextRequest, query: string): Promi
 
 export async function GET(request: NextRequest) {
   const user = await getSessionFromCookie()
-  if (!user) return NextResponse.redirect(new URL('/', request.url))
+  if (!user) return NextResponse.redirect(publicUrl(request, '/'))
 
   const { searchParams } = request.nextUrl
   const code = searchParams.get('code')
